@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Lars QR Scanner</title>
-  <meta name="theme-color" content="#0d1117">
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -56,7 +54,7 @@
 <div id="larsMenu">
   <button onclick="openFeedback()">📝 Send Feedback</button>
   <button onclick="openAbout()">ℹ️ About</button>
-  <button onclick="openDonate()">❤️ Donate</button>
+  <button onclick="openDonate()">☕ Support on Buy Me a Coffee</button>
 </div>
 
 <div id="actualSettingsPanel">
@@ -91,17 +89,15 @@
 
 <div id="feedbackOverlay">
   <div class="card">
-    <h3>Hi, Thank you for choosing Lars QR Tool!</h3>
-    <p style="margin:16px 0;">Please tell us how we could improve:</p>
-    <textarea id="feedbackText" placeholder="Your suggestions..."></textarea>
-    <button onclick="sendFeedback()">Send</button>
+    <h3>Send Feedback</h3>
+    <p style="margin:16px 0;">Love the app? Found a bug? Have an idea?<br>Let me know!</p>
+    <textarea id="feedbackText" placeholder="Your message..."></textarea>
+    <button onclick="sendFeedback()">Send Email</button>
     <button class="secondary" onclick="closeFeedback()">Cancel</button>
   </div>
 </div>
 
 <script>
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
-
 let html5QrcodeScanner = null;
 let torchOn = false;
 let track = null;
@@ -171,7 +167,7 @@ function startScanner() {
       if (cams && cams.length > 1) document.getElementById("cameraSwitch").style.display = "block";
     });
   }).catch(err => {
-    document.getElementById("result").innerText = "Camera access denied";
+    document.getElementById("result").innerText = "Camera access denied or unavailable";
   });
 }
 
@@ -249,13 +245,13 @@ document.addEventListener("DOMContentLoaded", () => {
   window.openFeedback = () => { larsMenu.style.display = "none"; document.getElementById("feedbackOverlay").style.display = "flex"; };
   window.closeFeedback = () => { document.getElementById("feedbackOverlay").style.display = "none"; document.getElementById("feedbackText").value = ""; };
   window.sendFeedback = () => {
-    const t = document.getElementById("feedbackText").value.trim();
-    if (!t) return alert("Write something!");
-    alert("Thank you! ❤️\n\n" + t + "\n\n(Email coming soon 🚀)");
+    const msg = document.getElementById("feedbackText").value.trim();
+    if (!msg) return alert("Please write a message!");
+    window.location.href = `mailto:larslabs@atomicmail.io?subject=Lars%20QR%20Tool%20Feedback&body=${encodeURIComponent(msg)}`;
     closeFeedback();
   };
   window.openAbout = () => { larsMenu.style.display = "none"; alert("Lars QR Tool\n\nVersion 1.0 • January 2026\nFully offline • Private • Fast\nMade with passion 🚀"); };
-  window.openDonate = () => { larsMenu.style.display = "none"; alert("Donate coming soon! ❤️"); };
+  window.openDonate = () => { larsMenu.style.display = "none"; window.open("https://buymeacoffee.com/larslabs", "_blank"); };
 
   document.getElementById("continuousToggle")?.addEventListener("change", e => {
     saveOption("continuous", e.target.checked);
