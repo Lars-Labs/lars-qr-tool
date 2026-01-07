@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lars QR Scanner</title>
+  <meta name="theme-color" content="#0d1117">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+
+<header>
+  <a href="index.html" id="homeBtn">← Home</a>
+  <span class="page-title" data-t="scanner">QR SCANNER</span>
+  <div id="headerRight">
+    <div id="larsButton">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200">
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+          .lars-text { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 120px; fill: var(--accent-color); }
+        </style>
+        <text x="50" y="135" class="lars-text">Lars</text>
+      </svg>
+    </div>
+    <div id="actualSettingsBtn">⚙️</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card scanner-card">
+    <div id="reader" style="width:100%;"></div>
+    <button id="torchBtn" style="display:none;">🔦</button>
+    <button id="cameraSwitch" style="display:none;">📷</button>
+    <button id="continuousBtn" style="display:block;">▶</button>
+  </div>
+  <div class="card">
+    <p class="result" id="result">// waiting for scan...</p>
+    <button id="copyAllBtn" class="primary">Copy All</button>
+    <button class="secondary" onclick="shareText()">Share</button>
+    <button class="secondary" onclick="clearResults()">Clear Results</button>
+    <button class="secondary" id="pasteBtn">📋 Paste Image</button>
+    <button class="secondary" onclick="document.getElementById('uploadQR').click()">📁 Upload Image</button>
+    <input type="file" accept="image/*" id="uploadQR" style="display:none;">
+    <button id="openBtn" class="secondary" style="display:none">Open Link</button>
+  </div>
+</div>
+
+<nav>
+  <a class="active" href="scanner.html" data-t="scan">Scan</a>
+  <a href="generator.html" data-t="create">Create</a>
+  <a href="history.html" data-t="historyNav">History</a>
+</nav>
+
+<div id="larsMenu">
+  <button onclick="openFeedback()">📝 Send Feedback</button>
+  <button onclick="openAbout()">ℹ️ About</button>
+  <button onclick="openDonate()">❤️ Donate</button>
+</div>
+
+<div id="actualSettingsPanel">
+  <h3 data-t="settings">Settings</h3>
+  <label data-t="theme">Theme</label>
+  <select id="themeSelect">
+    <option value="dark">Dark</option>
+    <option value="darkgrey">Dark Grey</option>
+    <option value="grey">Grey</option>
+    <option value="light">Light</option>
+  </select>
+  <label data-t="language">Language</label>
+  <select id="langSelect">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="zh">中文</option>
+  </select>
+  <label>QR Code Color</label>
+  <input type="color" id="qrColorPicker" value="#238636">
+  <label>Vibration feedback</label>
+  <input type="checkbox" id="vibrateToggle" checked>
+  <label>Beep sound</label>
+  <input type="checkbox" id="beepToggle" checked>
+  <label>Continuous scanning</label>
+  <input type="checkbox" id="continuousToggle">
+  <hr style="border:none; border-top:1px solid var(--border-color); margin:20px 0;">
+  <small style="color:var(--placeholder-color);">Lars QR Tool • January 2026<br>Fully offline • Private</small>
+  <button class="secondary" onclick="document.getElementById('actualSettingsPanel').style.display='none'">Close</button>
+</div>
+
+<div id="feedbackOverlay">
+  <div class="card">
+    <h3>Hi, Thank you for choosing Lars QR Tool!</h3>
+    <p style="margin:16px 0;">Please tell us how we could improve:</p>
+    <textarea id="feedbackText" placeholder="Your suggestions..."></textarea>
+    <button onclick="sendFeedback()">Send</button>
+    <button class="secondary" onclick="closeFeedback()">Cancel</button>
+  </div>
+</div>
+
+<script>
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+
+let html5QrcodeScanner = null;
+let torchOn = false;
+let track = null;
+let facingMode = "environment";
+let results = [];
+let continuous = false;
+
+function feedback() {
+  const opts = JSON.parse(localStorage.getItem("qrOptions") || "{}");
+  if (opts.beep !== false) new Audio("beep.ogg").play().catch(() => {});
+  if (opts.vibrate !== false && navigator.vibrate) navigator.vibrate([100,50,100]);
+}
+
+function displayResults() {
+  const el = document.getElementById("result");
+  const openBtn = document.getElementById("openBtn");
+  if (results.length === 0) { el.innerHTML = "// waiting for scan..."; openBtn.style.display = "none"; return; }
+  if (results.length === 1) {
+    el.innerText = results[0];
+    try { new URL(results[0]); openBtn.style.display = "block"; openBtn.onclick = () => window.open(results[0], "_blank"); } catch { openBtn.style.display = "none"; }
+  } else {
+    el.innerHTML = results.map((t,i) => `<div style="margin:8px 0;padding:10px;background:var(--input-bg);border-radius:8px;">${i+1}. ${t.replace(/</g,'&lt;')}</div>`).join("");
+    openBtn.style.display = "none";
+  }
+}
+
+function onScanSuccess(text) {
+  if (!results.includes(text)) results.push(text);
+  saveHistory(text);
+  feedback();
+  displayResults();
+  if (!continuous) html5QrcodeScanner.pause();
+}
+
+function saveHistory(text) {
+  let h = JSON.parse(localStorage.getItem("qrHistory") || "[]");
+  h.unshift({text, time: new Date().toISOString()});
+  if (h.length > 200) h.pop();
+  localStorage.setItem("qrHistory", JSON.stringify(h));
+}
+
+function shareText() {
+  navigator.share({text: results.length === 1 ? results[0] : results.join("\n")}).catch(() => {});
+}
+
+function clearResults() {
+  results = [];
+  displayResults();
+  if (continuous) html5QrcodeScanner.resume();
+}
+
+function startScanner() {
+  html5QrcodeScanner = new Html5Qrcode("reader");
+  html5QrcodeScanner.start(
+    { facingMode: facingMode },
+    { fps: 10, qrbox: { width: 250, height: 250 } },
+    onScanSuccess,
+    () => {}
+  ).then(() => {
+    html5QrcodeScanner.getRunningTrackCapabilities().then(cap => {
+      if (cap.torch) {
+        document.getElementById("torchBtn").style.display = "block";
+        track = html5QrcodeScanner.getRunningTrack();
+      }
+    });
+    html5QrcodeScanner.getCameras().then(cams => {
+      if (cams && cams.length > 1) document.getElementById("cameraSwitch").style.display = "block";
+    });
+  }).catch(err => {
+    document.getElementById("result").innerText = "Camera access denied";
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const opts = JSON.parse(localStorage.getItem("qrOptions") || "{}");
+  continuous = !!opts.continuous;
+  document.getElementById("continuousBtn").textContent = continuous ? "⏸" : "▶";
+
+  startScanner();
+
+  document.getElementById("continuousBtn").onclick = () => {
+    continuous = !continuous;
+    saveOption("continuous", continuous);
+    document.getElementById("continuousBtn").textContent = continuous ? "⏸" : "▶";
+    if (continuous) html5QrcodeScanner.resume();
+  };
+
+  document.getElementById("torchBtn").onclick = () => {
+    if (track) {
+      track.applyConstraints({ advanced: [{ torch: !torchOn }] });
+      torchOn = !torchOn;
+      document.getElementById("torchBtn").textContent = torchOn ? "💡" : "🔦";
+    }
+  };
+
+  document.getElementById("cameraSwitch").onclick = () => {
+    facingMode = facingMode === "environment" ? "user" : "environment";
+    html5QrcodeScanner.stop().then(startScanner);
+  };
+
+  document.getElementById("uploadQR").onchange = async e => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const texts = await html5QrcodeScanner.scanFileV2(file, true);
+        texts.forEach(t => onScanSuccess(t.decodedText));
+      } catch { alert("No QR found"); }
+    }
+  };
+
+  document.getElementById("pasteBtn").onclick = async () => {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        if (item.types.some(t => t.startsWith("image/"))) {
+          const blob = await item.getType(item.types.find(t => t.startsWith("image/")));
+          const texts = await html5QrcodeScanner.scanFileV2(blob, true);
+          texts.forEach(t => onScanSuccess(t.decodedText));
+          return;
+        }
+      }
+      alert("No image in clipboard");
+    } catch { alert("Clipboard access denied"); }
+  };
+
+  const colorPicker = document.getElementById("qrColorPicker");
+  if (colorPicker) {
+    colorPicker.value = localStorage.getItem("qrColor") || "#238636";
+    colorPicker.addEventListener("change", e => localStorage.setItem("qrColor", e.target.value));
+  }
+
+  const larsBtn = document.getElementById("larsButton");
+  const settingsBtn = document.getElementById("actualSettingsBtn");
+  const larsMenu = document.getElementById("larsMenu");
+  const settingsPanel = document.getElementById("actualSettingsPanel");
+
+  if (larsBtn) larsBtn.onclick = e => { e.stopPropagation(); larsMenu.style.display = larsMenu.style.display === "block" ? "none" : "block"; settingsPanel.style.display = "none"; };
+  if (settingsBtn) settingsBtn.onclick = e => { e.stopPropagation(); settingsPanel.style.display = settingsPanel.style.display === "block" ? "none" : "block"; larsMenu.style.display = "none"; };
+
+  document.addEventListener("click", e => {
+    if (larsMenu && !larsMenu.contains(e.target) && !larsBtn.contains(e.target)) larsMenu.style.display = "none";
+    if (settingsPanel && !settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) settingsPanel.style.display = "none";
+  });
+
+  window.openFeedback = () => { larsMenu.style.display = "none"; document.getElementById("feedbackOverlay").style.display = "flex"; };
+  window.closeFeedback = () => { document.getElementById("feedbackOverlay").style.display = "none"; document.getElementById("feedbackText").value = ""; };
+  window.sendFeedback = () => {
+    const t = document.getElementById("feedbackText").value.trim();
+    if (!t) return alert("Write something!");
+    alert("Thank you! ❤️\n\n" + t + "\n\n(Email coming soon 🚀)");
+    closeFeedback();
+  };
+  window.openAbout = () => { larsMenu.style.display = "none"; alert("Lars QR Tool\n\nVersion 1.0 • January 2026\nFully offline • Private • Fast\nMade with passion 🚀"); };
+  window.openDonate = () => { larsMenu.style.display = "none"; alert("Donate coming soon! ❤️"); };
+
+  document.getElementById("continuousToggle")?.addEventListener("change", e => {
+    saveOption("continuous", e.target.checked);
+    continuous = e.target.checked;
+    document.getElementById("continuousBtn").textContent = continuous ? "⏸" : "▶";
+  });
+
+  document.getElementById("themeSelect")?.addEventListener("change", e => saveTheme(e.target.value));
+  document.getElementById("langSelect")?.addEventListener("change", e => saveLang(e.target.value));
+  document.getElementById("vibrateToggle")?.addEventListener("change", e => saveOption("vibrate", e.target.checked));
+  document.getElementById("beepToggle")?.addEventListener("change", e => saveOption("beep", e.target.checked));
+});
+</script>
+</body>
+</html>

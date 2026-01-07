@@ -1,0 +1,5 @@
+const CACHE = "lars-qr-v1";
+self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(cache => cache.addAll([
+  "/", "/index.html", "/scanner.html", "/generator.html", "/history.html", "/style.css", "/theme.js", "/beep.ogg"
+]))));
+self.addEventListener("fetch", e => e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))));

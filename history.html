@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lars QR History</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+
+<header>
+  <a href="index.html" id="homeBtn">← Home</a>
+  <span class="page-title" data-t="history">SCAN HISTORY</span>
+  <div id="headerRight">
+    <div id="larsButton">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200">
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+          .lars-text { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 120px; fill: var(--accent-color); }
+        </style>
+        <text x="50" y="135" class="lars-text">Lars</text>
+      </svg>
+    </div>
+    <div id="actualSettingsBtn">⚙️</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card">
+    <input type="text" id="historySearch" placeholder="Search history..." autocomplete="off">
+    <button class="secondary small" onclick="clearHistory()">Clear All</button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<nav>
+  <a href="scanner.html" data-t="scan">Scan</a>
+  <a href="generator.html" data-t="create">Create</a>
+  <a class="active" href="history.html" data-t="historyNav">History</a>
+</nav>
+
+<div id="larsMenu">
+  <button onclick="openFeedback()">📝 Send Feedback</button>
+  <button onclick="openAbout()">ℹ️ About</button>
+  <button onclick="openDonate()">❤️ Donate</button>
+</div>
+
+<div id="actualSettingsPanel">
+  <h3 data-t="settings">Settings</h3>
+  <label data-t="theme">Theme</label>
+  <select id="themeSelect">
+    <option value="dark">Dark</option>
+    <option value="darkgrey">Dark Grey</option>
+    <option value="grey">Grey</option>
+    <option value="light">Light</option>
+  </select>
+  <label data-t="language">Language</label>
+  <select id="langSelect">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="zh">中文</option>
+  </select>
+  <label>QR Code Color</label>
+  <input type="color" id="qrColorPicker" value="#238636">
+  <label>Vibration feedback</label>
+  <input type="checkbox" id="vibrateToggle" checked>
+  <label>Beep sound</label>
+  <input type="checkbox" id="beepToggle" checked>
+  <label>Continuous scanning</label>
+  <input type="checkbox" id="continuousToggle">
+  <hr style="border:none; border-top:1px solid var(--border-color); margin:20px 0;">
+  <small style="color:var(--placeholder-color);">Lars QR Tool • January 2026<br>Fully offline • Private</small>
+  <button class="secondary" onclick="document.getElementById('actualSettingsPanel').style.display='none'">Close</button>
+</div>
+
+<div id="feedbackOverlay">
+  <div class="card">
+    <h3>Hi, Thank you for choosing Lars QR Tool!</h3>
+    <p style="margin:16px 0;">Please tell us how we could improve:</p>
+    <textarea id="feedbackText" placeholder="Your suggestions..."></textarea>
+    <button onclick="sendFeedback()">Send</button>
+    <button class="secondary" onclick="closeFeedback()">Cancel</button>
+  </div>
+</div>
+
+<script>
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}
+
+function renderHistory() {
+  const query = document.getElementById("historySearch").value.toLowerCase();
+  const history = JSON.parse(localStorage.getItem("qrHistory") || "[]");
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  const filtered = history.filter(item => item.text.toLowerCase().includes(query));
+  if (filtered.length === 0) { list.innerHTML = "<p style='text-align:center; color:var(--placeholder-color);'>No history yet</p>"; return; }
+  filtered.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "card result";
+    div.style.cursor = "pointer";
+    div.onclick = () => {
+      navigator.clipboard.writeText(item.text);
+      div.style.background = "var(--primary-button)";
+      div.style.color = "white";
+      setTimeout(() => { div.style.background = ""; div.style.color = ""; }, 300);
+    };
+    div.innerHTML = `<strong>${formatDate(item.time)}</strong><br>${item.text.replace(/</g,'&lt;')}`;
+    list.appendChild(div);
+  });
+}
+
+function clearHistory() {
+  if (confirm("Delete all scan history?")) { localStorage.removeItem("qrHistory"); renderHistory(); }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("historySearch").oninput = renderHistory;
+  renderHistory();
+
+  const colorPicker = document.getElementById("qrColorPicker");
+  if (colorPicker) {
+    colorPicker.value = localStorage.getItem("qrColor") || "#238636";
+    colorPicker.addEventListener("change", e => localStorage.setItem("qrColor", e.target.value));
+  }
+
+  const larsBtn = document.getElementById("larsButton");
+  const settingsBtn = document.getElementById("actualSettingsBtn");
+  const larsMenu = document.getElementById("larsMenu");
+  const settingsPanel = document.getElementById("actualSettingsPanel");
+
+  if (larsBtn) larsBtn.onclick = e => { e.stopPropagation(); larsMenu.style.display = larsMenu.style.display === "block" ? "none" : "block"; settingsPanel.style.display = "none"; };
+  if (settingsBtn) settingsBtn.onclick = e => { e.stopPropagation(); settingsPanel.style.display = settingsPanel.style.display === "block" ? "none" : "block"; larsMenu.style.display = "none"; };
+
+  document.addEventListener("click", e => {
+    if (larsMenu && !larsMenu.contains(e.target) && !larsBtn.contains(e.target)) larsMenu.style.display = "none";
+    if (settingsPanel && !settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) settingsPanel.style.display = "none";
+  });
+
+  window.openFeedback = () => { larsMenu.style.display = "none"; document.getElementById("feedbackOverlay").style.display = "flex"; };
+  window.closeFeedback = () => { document.getElementById("feedbackOverlay").style.display = "none"; document.getElementById("feedbackText").value = ""; };
+  window.sendFeedback = () => {
+    const t = document.getElementById("feedbackText").value.trim();
+    if (!t) return alert("Write something!");
+    alert("Thank you! ❤️\n\n" + t + "\n\n(Email coming soon 🚀)");
+    closeFeedback();
+  };
+  window.openAbout = () => { larsMenu.style.display = "none"; alert("Lars QR Tool\n\nVersion 1.0 • January 2026\nFully offline • Private • Fast\nMade with passion 🚀"); };
+  window.openDonate = () => { larsMenu.style.display = "none"; alert("Donate coming soon! ❤️"); };
+
+  document.getElementById("themeSelect")?.addEventListener("change", e => saveTheme(e.target.value));
+  document.getElementById("langSelect")?.addEventListener("change", e => saveLang(e.target.value));
+  document.getElementById("vibrateToggle")?.addEventListener("change", e => saveOption("vibrate", e.target.checked));
+  document.getElementById("beepToggle")?.addEventListener("change", e => saveOption("beep", e.target.checked));
+  document.getElementById("continuousToggle")?.addEventListener("change", e => saveOption("continuous", e.target.checked));
+});
+</script>
+</body>
+</html>
