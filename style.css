@@ -10,42 +10,35 @@
   --border-color: #21262d;
   --placeholder-color: #8b949e;
   --primary-button: #238636;
-  --secondary-button: #21262d;
+  --input-bg: #010409;
   --nav-bg: #010409;
   --nav-text: #8b949e;
-  --input-bg: #010409;
 }
 
-body { 
-  margin: 0; 
-  font-family: "JetBrains Mono", monospace; 
-  background: var(--bg-color); 
-  color: var(--text-color); 
-  min-height: 100vh; 
-  overscroll-behavior: none; 
+body {
+  margin: 0;
+  font-family: "JetBrains Mono", monospace;
+  background: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  overscroll-behavior: none;
 }
 
-/* Header - responsive and spacious */
+/* Header */
 header {
   display: flex;
   align-items: center;
-  padding: 14px 20px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border-color);
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
-  justify-content: space-between;
 }
 
 #homeBtn {
-  font-size: 28px;
+  font-size: 26px;
   color: var(--accent-color);
-  opacity: 0.8;
   text-decoration: none;
-  flex-shrink: 0;
-}
-
-#homeBtn:hover {
-  opacity: 1;
+  opacity: 0.8;
 }
 
 .page-title {
@@ -53,59 +46,42 @@ header {
   font-weight: 500;
   letter-spacing: 1.2px;
   flex: 1;
-  text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 140px;
 }
 
-/* APK Download Button */
 .apk-download-btn {
   background: var(--primary-button);
   color: white;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 50px;
-  text-decoration: none;
   font-size: 14px;
   font-weight: 600;
+  text-decoration: none;
   white-space: nowrap;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-.apk-download-btn:hover {
-  opacity: 0.9;
-}
-
-/* Right group - Lars + Gear */
 #headerRight {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-}
-
-/* Lars Logo */
-#larsButton {
-  cursor: pointer;
+  gap: 12px;
 }
 
 #larsLogoImg {
-  height: 46px;
+  height: 44px;
   width: auto;
   border-radius: 50px;
-  padding: 8px 24px;
+  padding: 6px 20px;
   background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-/* Gear */
 #actualSettingsBtn {
-  font-size: 26px;
-  width: 48px;
-  height: 48px;
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
   background: rgba(255,255,255,0.05);
   border-radius: 50%;
   display: flex;
@@ -114,75 +90,47 @@ header {
   cursor: pointer;
 }
 
-/* Mobile adjustments */
-@media (max-width: 480px) {
-  header {
-    padding: 12px 16px;
-    gap: 12px;
-  }
-
-  .page-title {
-    font-size: 17px;
-  }
-
-  .apk-download-btn {
-    font-size: 13px;
-    padding: 8px 16px;
-  }
-
-  #larsLogoImg {
-    height: 44px;
-    padding: 8px 20px;
-  }
-
-  #actualSettingsBtn {
-    width: 44px;
-    height: 44px;
-    font-size: 24px;
-  }
+.container {
+  padding: 20px;
+  padding-bottom: 100px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.container { 
-  padding: 20px; 
-  padding-bottom: 100px; 
-  max-width: 600px; 
-  margin: 0 auto; 
-}
-
-.card { 
-  background: var(--card-bg); 
-  border: 1px solid var(--border-color); 
-  border-radius: 16px; 
-  padding: 20px; 
-  margin-bottom: 20px; 
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3); 
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
 input, textarea, select {
-  width: 100%; 
-  padding: 12px 14px; 
-  margin: 10px 0; 
-  background: var(--input-bg); 
-  border: 1px solid var(--border-color); 
-  border-radius: 10px; 
-  color: var(--text-color); 
-  font-family: inherit; 
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-color);
+  font-family: inherit;
   font-size: 15px;
 }
 
-input::placeholder, textarea::placeholder { 
-  color: var(--placeholder-color); 
+input::placeholder, textarea::placeholder {
+  color: var(--placeholder-color);
 }
 
 button {
   font-family: "JetBrains Mono", monospace !important;
-  width: 100%; 
-  padding: 14px; 
-  margin-top: 12px; 
-  border: none; 
-  border-radius: 10px; 
-  font-size: 15px; 
-  font-weight: 500; 
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
 }
 
@@ -198,8 +146,8 @@ button.secondary {
   color: var(--text-color);
 }
 
-button:hover { 
-  opacity: 0.9; 
+button:hover {
+  opacity: 0.9;
 }
 
 .scanner-card {
@@ -221,16 +169,11 @@ button:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
   z-index: 10;
   cursor: pointer;
-  transition: none;
 }
 
 #torchBtn { right: 92px; }
 #cameraSwitch { right: 160px; }
 #continuousBtn { right: 24px; }
-
-#torchBtn:hover, #cameraSwitch:hover, #continuousBtn:hover {
-  background: rgba(0,0,0,0.9);
-}
 
 .qr-output-card {
   display: flex;
@@ -287,16 +230,15 @@ nav a {
   font-weight: 500;
 }
 
-nav a.active { 
-  color: var(--accent-color); 
+nav a.active {
+  color: var(--accent-color);
 }
 
 #larsMenu, #actualSettingsPanel {
   display: none;
   position: fixed;
   top: 76px;
-  right: 16px !important;
-  left: auto !important;
+  right: 16px;
   width: 280px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -321,7 +263,7 @@ nav a.active {
 }
 
 #larsMenu button:hover, #actualSettingsPanel button:hover {
-  background: var(--secondary-button);
+  background: rgba(255,255,255,0.1);
 }
 
 #feedbackOverlay {
