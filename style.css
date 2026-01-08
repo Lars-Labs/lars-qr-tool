@@ -438,3 +438,29 @@ nav a.active {
   right: 16px !important;
   left: auto !important;
 }
+
+/* Homepage ONLY: Lars menu opens left (next to left button) */
+.homepage-container #larsMenu {
+  left: 16px !important;
+  right: auto !important;
+  transform: translateX(0); /* ensure no offset */
+}
+
+/* All pages: Settings panel opens right (normal) */
+#actualSettingsPanel {
+  right: 16px !important;
+  left: auto !important;
+}
+
+/* Ensure Lars menu has no extra positioning */
+#larsMenu {
+  position: fixed;
+  top: 76px;
+  width: 280px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+  z-index: 1000;
+}
