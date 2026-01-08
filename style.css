@@ -416,3 +416,20 @@ nav a.active {
   font-size: 14px;
   line-height: 1.6;
 }
+
+/* Homepage header - Lars button on right */
+.homepage-container header {
+  justify-content: flex-end;
+}
+
+.homepage-container #larsButton {
+  order: 2;
+}
+
+.homepage-container .apk-download-btn {
+  order: 3;
+}
+
+.homepage-container #actualSettingsBtn {
+  order: 1;
+}
