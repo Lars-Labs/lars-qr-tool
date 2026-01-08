@@ -396,3 +396,7 @@ nav a.active {
   line-height: 1.6;
 }
 
+#larsMenu, #actualSettingsPanel {
+  right: 16px !important;
+  left: auto !important;
+}
