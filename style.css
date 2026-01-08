@@ -25,15 +25,38 @@ body {
   overscroll-behavior: none; 
 }
 
-/* Header - responsive, no wrap, perfect alignment */
-header {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color);
-  gap: 10px;
-  flex-wrap: nowrap;
-  overflow: hidden;
+/* Homepage header - centered and balanced */
+.homepage-container header {
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 16px;
+}
+
+.homepage-container #larsButton {
+  margin: 0 auto;
+}
+
+.homepage-container #larsLogoImg {
+  height: 60px; /* bigger on homepage */
+  padding: 8px 24px;
+}
+
+.homepage-container .apk-download-btn {
+  margin: 0 auto;
+  padding: 10px 20px;
+  font-size: 15px;
+}
+
+.homepage-container #actualSettingsBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+/* Sub-pages header - keep left-aligned with back button */
+body:not(.homepage-container) header {
+  justify-content: flex-start;
 }
 
 #homeBtn {
@@ -420,3 +443,4 @@ nav a.active {
   font-size: 14px;
   line-height: 1.6;
 }
+
