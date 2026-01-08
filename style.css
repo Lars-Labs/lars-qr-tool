@@ -79,41 +79,35 @@ header {
   gap: 10px;
   margin-left: auto;
   flex-shrink: 0;
+/* Lars Logo - bigger and better */
+#larsLogoImg {
+  height: 48px; /* increased from 36-38px */
+  width: auto;
+  border-radius: 50px;
+  padding: 6px 18px; /* more padding for pill feel */
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transition: transform 0.2s;
 }
 
 #larsButton {
-  cursor: pointer;
-}
-
-#larsLogoImg {
-  height: 36px;
-  width: auto;
+  padding: 10px;
   border-radius: 50px;
-  padding: 4px 12px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-#actualSettingsBtn {
-  font-size: 24px;
-  padding: 8px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 50%;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
 }
 
-/* Mobile fine-tuning */
+#larsButton:hover #larsLogoImg {
+  transform: scale(1.05);
+}
+
 @media (max-width: 480px) {
-  header {
-    padding: 10px 12px;
-    gap: 6px;
+  #larsLogoImg {
+    height: 44px;
+    padding: 6px 16px;
   }
+}
+
 
   .page-title {
     font-size: 15px;
@@ -413,3 +407,4 @@ nav a.active {
   font-size: 14px;
   line-height: 1.6;
 }
+
