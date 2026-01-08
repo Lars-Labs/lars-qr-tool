@@ -13,6 +13,16 @@ const translations = {
   zh: { scanner: "二维码扫描", generator: "二维码生成", history: "扫描历史", scan: "扫描", create: "生成", historyNav: "历史", settings: "设置", theme: "主题", language: "语言", close: "关闭", appTitle: "Lars QR 工具" }
 };
 
+const translations = {
+  en: { 
+    scanner: "QR SCANNER", 
+    generator: "QR GENERATOR", 
+    history: "SCAN HISTORY",
+    // ... other keys
+  },
+  // other languages...
+};
+
 function getCurrentLang() { return localStorage.getItem("qrLang") || "en"; }
 function t(key) { const lang = getCurrentLang(); return translations[lang]?.[key] || translations.en[key] || key; }
 
@@ -39,5 +49,6 @@ function saveOption(key, value) {
   localStorage.setItem("qrOptions", JSON.stringify(opts));
   applyThemeAndLang();
 }
+
 
 document.addEventListener("DOMContentLoaded", applyThemeAndLang);
