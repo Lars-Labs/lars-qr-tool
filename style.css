@@ -68,14 +68,34 @@ header {
   gap: 12px;
 }
 
+/* Lars Logo - big and visible */
+#larsButton {
+  cursor: pointer;
+  padding: 8px; /* extra space around */
+}
+
 #larsLogoImg {
-  height: 44px;
+  height: 56px; /* bigger height */
   width: auto;
-  border-radius: 50px;
-  padding: 6px 20px;
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  border-radius: 60px; /* more pill-shaped */
+  padding: 12px 32px; /* thick padding for big pill feel */
+  background: rgba(255,255,255,0.2); /* higher contrast background */
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5); /* stronger shadow */
+  transition: transform 0.2s, background 0.2s;
+}
+
+#larsButton:hover #larsLogoImg {
+  transform: scale(1.08); /* slight grow on hover */
+  background: rgba(255,255,255,0.3);
+}
+
+/* Mobile - still big but not overwhelming */
+@media (max-width: 480px) {
+  #larsLogoImg {
+    height: 50px;
+    padding: 10px 28px;
+  }
 }
 
 #actualSettingsBtn {
@@ -361,3 +381,4 @@ nav a.active {
   font-size: 14px;
   line-height: 1.6;
 }
+
