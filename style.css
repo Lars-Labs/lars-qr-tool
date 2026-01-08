@@ -118,13 +118,10 @@ header {
   cursor: pointer;
 }
 
-/* Homepage special tweaks */
-.homepage-container header {
-  justify-content: space-between;
-}
-
-.homepage-container .page-title {
-  display: none; /* no title on homepage */
+/* Homepage ONLY: Lars menu opens left (next to left button) */
+.homepage-container #larsMenu {
+  left: 16px !important;
+  right: auto !important;
 }
 
 /* Mobile */
@@ -299,6 +296,7 @@ nav a.active {
   color: var(--accent-color);
 }
 
+/* Menus - default right, homepage Lars menu left */
 #larsMenu, #actualSettingsPanel {
   display: none;
   position: fixed;
@@ -425,42 +423,4 @@ nav a.active {
   color: var(--placeholder-color);
   font-size: 14px;
   line-height: 1.6;
-}
-
-/* Homepage ONLY: Lars menu opens left (next to left button) */
-.homepage-container #larsMenu {
-  left: 16px !important;
-  right: auto !important;
-}
-
-/* All pages: Settings panel opens right */
-#actualSettingsPanel {
-  right: 16px !important;
-  left: auto !important;
-}
-
-/* Homepage ONLY: Lars menu opens left (next to left button) */
-.homepage-container #larsMenu {
-  left: 16px !important;
-  right: auto !important;
-  transform: translateX(0); /* ensure no offset */
-}
-
-/* All pages: Settings panel opens right (normal) */
-#actualSettingsPanel {
-  right: 16px !important;
-  left: auto !important;
-}
-
-/* Ensure Lars menu has no extra positioning */
-#larsMenu {
-  position: fixed;
-  top: 76px;
-  width: 280px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
-  z-index: 1000;
 }
