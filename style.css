@@ -24,17 +24,18 @@ body {
   overscroll-behavior: none;
 }
 
-/* Header - balanced and responsive */
+/* Header - clean and responsive */
 header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 14px 20px;
   border-bottom: 1px solid var(--border-color);
   gap: 16px;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
+/* Back button (sub-pages only) */
 #homeBtn {
   font-size: 28px;
   color: var(--accent-color);
@@ -47,18 +48,18 @@ header {
   opacity: 1;
 }
 
+/* Page title (sub-pages only) */
 .page-title {
   font-size: 18px;
   font-weight: 500;
   letter-spacing: 1.2px;
   flex: 1;
-  text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* APK Button */
+/* APK Download Button */
 .apk-download-btn {
   background: var(--primary-button);
   color: white;
@@ -76,7 +77,7 @@ header {
   opacity: 0.9;
 }
 
-/* Right group */
+/* Right group - Lars + Gear */
 #headerRight {
   display: flex;
   align-items: center;
@@ -84,7 +85,7 @@ header {
   flex-shrink: 0;
 }
 
-/* Lars Logo - big and visible */
+/* Lars Logo - big and bold */
 #larsButton {
   cursor: pointer;
 }
@@ -115,6 +116,15 @@ header {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+/* Homepage special tweaks */
+.homepage-container header {
+  justify-content: space-between;
+}
+
+.homepage-container .page-title {
+  display: none; /* no title on homepage */
 }
 
 /* Mobile */
@@ -415,43 +425,4 @@ nav a.active {
   color: var(--placeholder-color);
   font-size: 14px;
   line-height: 1.6;
-}
-
-/* Homepage header - Lars button on right */
-.homepage-container header {
-  justify-content: flex-end;
-}
-
-.homepage-container #larsButton {
-  order: 2;
-}
-
-.homepage-container .apk-download-btn {
-  order: 3;
-}
-
-.homepage-container #actualSettingsBtn {
-  order: 1;
-}
-
-/* Homepage: Lars menu opens left (next to button) */
-.homepage-container #larsMenu {
-  left: 16px !important;
-  right: auto !important;
-}
-
-/* Homepage: bigger Lars logo */
-.homepage-container #larsLogoImg {
-  height: 60px;
-  padding: 10px 30px;
-}
-
-/* Homepage header spacing */
-.homepage-container header {
-  justify-content: flex-start;
-  gap: 20px;
-}
-
-.homepage-container .apk-download-btn {
-  margin-left: auto;
 }
