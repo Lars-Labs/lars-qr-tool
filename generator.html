@@ -17,7 +17,7 @@
   <a href="lars-qr.apk" download class="apk-download-btn">Download APK</a>
   <div id="headerRight">
     <div id="larsButton">
-      <img src="lars-logo.jpg" alt="Lars" id="larsLogoImg">
+      <img src="lars-logo.png" alt="Lars" id="larsLogoImg">
     </div>
     <div id="actualSettingsBtn">⚙️</div>
   </div>
@@ -57,11 +57,43 @@
 </div>
 
 <div id="actualSettingsPanel">
-  <!-- same as before -->
+  <h3 data-t="settings">Settings</h3>
+  <label data-t="theme">Theme</label>
+  <select id="themeSelect">
+    <option value="dark">Dark</option>
+    <option value="darkgrey">Dark Grey</option>
+    <option value="grey">Grey</option>
+    <option value="light">Light</option>
+  </select>
+  <label data-t="language">Language</label>
+  <select id="langSelect">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="zh">中文</option>
+  </select>
+  <label>QR Code Color</label>
+  <input type="color" id="qrColorPicker" value="#238636">
+  <label>Vibration feedback</label>
+  <input type="checkbox" id="vibrateToggle" checked>
+  <label>Beep sound</label>
+  <input type="checkbox" id="beepToggle" checked>
+  <label>Continuous scanning</label>
+  <input type="checkbox" id="continuousToggle">
+  <hr style="border:none; border-top:1px solid var(--border-color); margin:20px 0;">
+  <small style="color:var(--placeholder-color);">Lars QR Tool • January 2026<br>Fully offline • Private</small>
+  <button class="secondary" onclick="document.getElementById('actualSettingsPanel').style.display='none'">Close</button>
 </div>
 
 <div id="feedbackOverlay">
-  <!-- same as before -->
+  <div class="card">
+    <h3>Send Feedback</h3>
+    <p style="margin:16px 0;">Love the app? Found a bug? Have an idea?<br>Let me know!</p>
+    <textarea id="feedbackText" placeholder="Your message..."></textarea>
+    <button onclick="sendFeedback()">Send Email</button>
+    <button class="secondary" onclick="closeFeedback()">Cancel</button>
+  </div>
 </div>
 
 <script>
@@ -137,19 +169,80 @@ function generate() {
     }
 
     currentCanvas = canvas;
+    box.classList.remove("animate-in");
+    void box.offsetWidth;
     box.classList.add("animate-in");
     saveGeneratedToHistory(text);
   }, 100);
 }
 
-// pasteText, downloadQR, shareQR same as before
+async function pasteText() {
+  try {
+    const text = await navigator.clipboard.readText();
+    document.getElementById("text").value = text;
+    generate();
+  } catch { alert("Clipboard access denied"); }
+}
+
+function downloadQR() {
+  if (!currentCanvas) return alert("Generate a QR code first!");
+  const a = document.createElement("a");
+  a.download = "lars-qr.png";
+  a.href = currentCanvas.toDataURL("image/png");
+  a.click();
+}
+
+async function shareQR() {
+  if (!currentCanvas) return alert("Generate a QR code first!");
+  currentCanvas.toBlob(async blob => {
+    const file = new File([blob], "lars-qr.png", {type: "image/png"});
+    if (navigator.canShare && navigator.canShare({files: [file]})) await navigator.share({files: [file], title: "QR Code by Lars"});
+    else alert("Sharing not supported");
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  // color picker, menu handlers, feedback, donate, settings same as before
+  const colorPicker = document.getElementById("qrColorPicker");
+  if (colorPicker) {
+    colorPicker.value = getQRColor();
+    colorPicker.addEventListener("change", e => {
+      localStorage.setItem("qrColor", e.target.value);
+      if (document.getElementById("text").value.trim()) generate();
+    });
+  }
+
+  const larsBtn = document.getElementById("larsButton");
+  const settingsBtn = document.getElementById("actualSettingsBtn");
+  const larsMenu = document.getElementById("larsMenu");
+  const settingsPanel = document.getElementById("actualSettingsPanel");
+
+  if (larsBtn) larsBtn.onclick = e => { e.stopPropagation(); larsMenu.style.display = larsMenu.style.display === "block" ? "none" : "block"; settingsPanel.style.display = "none"; };
+  if (settingsBtn) settingsBtn.onclick = e => { e.stopPropagation(); settingsPanel.style.display = settingsPanel.style.display === "block" ? "none" : "block"; larsMenu.style.display = "none"; };
+
+  document.addEventListener("click", e => {
+    if (larsMenu && !larsMenu.contains(e.target) && !larsBtn.contains(e.target)) larsMenu.style.display = "none";
+    if (settingsPanel && !settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) settingsPanel.style.display = "none";
+  });
+
+  window.openFeedback = () => { larsMenu.style.display = "none"; document.getElementById("feedbackOverlay").style.display = "flex"; };
+  window.closeFeedback = () => { document.getElementById("feedbackOverlay").style.display = "none"; document.getElementById("feedbackText").value = ""; };
+  window.sendFeedback = () => {
+    const msg = document.getElementById("feedbackText").value.trim();
+    if (!msg) return alert("Please write a message!");
+    window.location.href = `mailto:larslabs@atomicmail.io?subject=Lars%20QR%20Tool%20Feedback&body=${encodeURIComponent(msg)}`;
+    closeFeedback();
+  };
+  window.openAbout = () => { larsMenu.style.display = "none"; alert("Lars QR Tool\n\nVersion 1.0 • January 2026\nFully offline • Private • Fast\nMade with passion 🚀"); };
+  window.openDonate = () => { larsMenu.style.display = "none"; window.open("https://buymeacoffee.com/larslabs", "_blank"); };
+
+  document.getElementById("themeSelect")?.addEventListener("change", e => saveTheme(e.target.value));
+  document.getElementById("langSelect")?.addEventListener("change", e => saveLang(e.target.value));
+  document.getElementById("vibrateToggle")?.addEventListener("change", e => saveOption("vibrate", e.target.checked));
+  document.getElementById("beepToggle")?.addEventListener("change", e => saveOption("beep", e.target.checked));
+  document.getElementById("continuousToggle")?.addEventListener("change", e => saveOption("continuous", e.target.checked));
 
   generate();
 });
 </script>
 </body>
 </html>
-
