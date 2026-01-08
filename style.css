@@ -426,3 +426,15 @@ nav a.active {
   font-size: 14px;
   line-height: 1.6;
 }
+
+/* Homepage ONLY: Lars menu opens left (next to left button) */
+.homepage-container #larsMenu {
+  left: 16px !important;
+  right: auto !important;
+}
+
+/* All pages: Settings panel opens right */
+#actualSettingsPanel {
+  right: 16px !important;
+  left: auto !important;
+}
