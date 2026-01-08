@@ -52,3 +52,76 @@ function saveOption(key, value) {
 
 
 document.addEventListener("DOMContentLoaded", applyThemeAndLang);
+
+// theme.js - Theme management for Lars QR Tool
+
+const themes = {
+  dark: {
+    '--bg-color': '#0d1117',
+    '--card-bg': '#010409',
+    '--text-color': '#c9d1d9',
+    '--border-color': '#21262d',
+    '--placeholder-color': '#8b949e',
+    '--input-bg': '#010409',
+    '--nav-bg': '#010409',
+    '--nav-text': '#8b949e'
+  },
+  darkgrey: {
+    '--bg-color': '#161b22',
+    '--card-bg': '#0d1117',
+    '--text-color': '#f0f6fc',
+    '--border-color': '#30363d',
+    '--placeholder-color': '#8b949e',
+    '--input-bg': '#0d1117',
+    '--nav-bg': '#0d1117',
+    '--nav-text': '#8b949e'
+  },
+  grey: {
+    '--bg-color': '#24292f',
+    '--card-bg': '#161b22',
+    '--text-color': '#f0f6fc',
+    '--border-color': '#444d56',
+    '--placeholder-color': '#6e7681',
+    '--input-bg': '#161b22',
+    '--nav-bg': '#161b22',
+    '--nav-text': '#8b949e'
+  },
+  light: {
+    '--bg-color': '#ffffff',
+    '--card-bg': '#f6f8fa',
+    '--text-color': '#24292f',
+    '--border-color': '#d0d7de',
+    '--placeholder-color': '#6e7781',
+    '--input-bg': '#ffffff',
+    '--nav-bg': '#f6f8fa',
+    '--nav-text': '#57606a'
+  }
+};
+
+function applyTheme(themeName) {
+  const theme = themes[themeName] || themes.dark;
+  Object.keys(theme).forEach(key => {
+    document.documentElement.style.setProperty(key, theme[key]);
+  });
+  localStorage.setItem("theme", themeName);
+  // Update select if exists
+  const select = document.getElementById("themeSelect");
+  if (select) select.value = themeName;
+}
+
+function saveTheme(themeName) {
+  applyTheme(themeName);
+}
+
+// Load saved theme on start
+document.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  applyTheme(savedTheme);
+  
+  // Sync select if on settings page
+  const select = document.getElementById("themeSelect");
+  if (select) {
+    select.value = savedTheme;
+    select.addEventListener("change", e => saveTheme(e.target.value));
+  }
+});
