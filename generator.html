@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Lars QR Generator</title>
+  <meta name="theme-color" content="#238636">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
@@ -12,6 +14,7 @@
 <header>
   <a href="index.html" id="homeBtn">← Home</a>
   <span class="page-title" data-t="generator">QR GENERATOR</span>
+  <a href="lars-qr.apk" download class="apk-download-btn">Download APK</a>
   <div id="headerRight">
     <div id="larsButton">
       <img src="lars-logo.png" alt="Lars" id="larsLogoImg">
@@ -26,9 +29,9 @@
     
     <div style="margin: 16px 0;">
       <label style="display:block; margin-bottom:8px; color:var(--text-color);">Embed Logo (optional)</label>
-      <input type="file" id="logoUpload" accept="image/*">
-      <button class="secondary" onclick="document.getElementById('logoUpload').click()" style="margin-top:8px;">Choose Logo</button>
-      <button class="secondary" onclick="clearLogo()" style="margin-top:8px; margin-left:8px;">Clear Logo</button>
+      <input type="file" id="logoUpload" accept="image/*" style="display:none;">
+      <button class="secondary" onclick="document.getElementById('logoUpload').click()">Choose Logo</button>
+      <button class="secondary" onclick="clearLogo()">Clear Logo</button>
     </div>
 
     <button onclick="generate()">Generate QR</button>
@@ -39,11 +42,6 @@
   <div class="card qr-output-card">
     <div id="qrcode"></div>
   </div>
-
-  <div class="card" style="text-align:center; margin-top:20px;">
-    <p>Want the native app?</p>
-    <a href="lars-qr.apk" download class="primary-button">Download APK for Android</a>
-  </div>
 </div>
 
 <nav>
@@ -52,9 +50,23 @@
   <a href="history.html" data-t="historyNav">History</a>
 </nav>
 
-<!-- Same menus, settings, feedback as before -->
+<div id="larsMenu">
+  <button onclick="openFeedback()">📝 Send Feedback</button>
+  <button onclick="openAbout()">ℹ️ About</button>
+  <button onclick="openDonate()">☕ Support on Buy Me a Coffee</button>
+</div>
+
+<div id="actualSettingsPanel">
+  <!-- same as before -->
+</div>
+
+<div id="feedbackOverlay">
+  <!-- same as before -->
+</div>
 
 <script>
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+
 let currentCanvas = null;
 let logoImage = null;
 
@@ -97,51 +109,45 @@ function generate() {
   const box = document.getElementById("qrcode");
   box.innerHTML = "";
 
-  // Generate base QR
   new QRCode(box, {
     text: text,
     width: 512,
     height: 512,
     colorDark: getQRColor(),
     colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction for logo
+    correctLevel: QRCode.CorrectLevel.H
   });
 
-  // Wait for canvas, then overlay logo
   setTimeout(() => {
     const canvas = box.querySelector("canvas");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
     if (logoImage) {
-      const logoSize = canvas.width * 0.2; // 20% of QR size
+      const logoSize = canvas.width * 0.2;
       const x = (canvas.width - logoSize) / 2;
       const y = (canvas.height - logoSize) / 2;
 
-      // White background circle for logo
       ctx.fillStyle = "#ffffff";
       ctx.beginPath();
-      ctx.arc(canvas.width / 2, canvas.height / 2, logoSize / 2 + 8, 0, Math.PI * 2);
+      ctx.arc(canvas.width / 2, canvas.height / 2, logoSize / 2 + 10, 0, Math.PI * 2);
       ctx.fill();
 
-      // Draw logo
       ctx.drawImage(logoImage, x, y, logoSize, logoSize);
     }
 
     currentCanvas = canvas;
-    box.classList.remove("animate-in");
-    void box.offsetWidth;
     box.classList.add("animate-in");
     saveGeneratedToHistory(text);
   }, 100);
 }
 
-// Rest of functions (pasteText, downloadQR, shareQR) same as before
+// pasteText, downloadQR, shareQR same as before
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ... same menu, settings, feedback, color picker code as before
+  // color picker, menu handlers, feedback, donate, settings same as before
 
-  generate(); // initial
+  generate();
 });
 </script>
 </body>
