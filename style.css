@@ -433,3 +433,25 @@ nav a.active {
 .homepage-container #actualSettingsBtn {
   order: 1;
 }
+
+/* Homepage: Lars menu opens left (next to button) */
+.homepage-container #larsMenu {
+  left: 16px !important;
+  right: auto !important;
+}
+
+/* Homepage: bigger Lars logo */
+.homepage-container #larsLogoImg {
+  height: 60px;
+  padding: 10px 30px;
+}
+
+/* Homepage header spacing */
+.homepage-container header {
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.homepage-container .apk-download-btn {
+  margin-left: auto;
+}
