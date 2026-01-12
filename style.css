@@ -118,10 +118,30 @@ header {
   cursor: pointer;
 }
 
-/* Homepage ONLY: Lars menu opens LEFT (next to left button) */
+/* Homepage ONLY: Force Lars panel to open LEFT next to the button */
 .homepage-container #larsMenu {
   left: 16px !important;
   right: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Make sure it has high priority and no conflicting styles */
+.homepage-container #larsMenu {
+  position: fixed !important;
+  top: 76px !important;
+  width: 280px !important;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6) !important;
+  z-index: 1000 !important;
+}
+
+/* Settings panel always right on all pages */
+#actualSettingsPanel {
+  right: 16px !important;
+  left: auto !important;
 }
 
 /* Mobile adjustments */
