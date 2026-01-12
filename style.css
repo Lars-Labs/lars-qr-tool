@@ -24,7 +24,7 @@ body {
   overscroll-behavior: none;
 }
 
-/* Header - clean and responsive */
+/* Header - consistent & balanced */
 header {
   display: flex;
   align-items: center;
@@ -85,7 +85,7 @@ header {
   flex-shrink: 0;
 }
 
-/* Lars Logo - big and bold */
+/* Lars Logo - big & bold */
 #larsButton {
   cursor: pointer;
 }
@@ -118,13 +118,13 @@ header {
   cursor: pointer;
 }
 
-/* Homepage ONLY: Lars menu opens left (next to left button) */
+/* Homepage ONLY: Lars menu opens on RIGHT (next to left button) */
 .homepage-container #larsMenu {
-  left: 16px !important;
-  right: auto !important;
+  right: 16px !important;
+  left: auto !important;
 }
 
-/* Mobile */
+/* Mobile adjustments */
 @media (max-width: 480px) {
   header {
     padding: 12px 16px;
@@ -296,7 +296,7 @@ nav a.active {
   color: var(--accent-color);
 }
 
-/* Menus - default right, homepage Lars menu left */
+/* Menus - default right, but homepage Lars menu right (as requested) */
 #larsMenu, #actualSettingsPanel {
   display: none;
   position: fixed;
