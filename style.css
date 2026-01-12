@@ -118,10 +118,10 @@ header {
   cursor: pointer;
 }
 
-/* Homepage ONLY: Lars menu opens on RIGHT (next to left button) */
+/* Homepage ONLY: Lars menu opens LEFT (next to left button) */
 .homepage-container #larsMenu {
-  right: 16px !important;
-  left: auto !important;
+  left: 16px !important;
+  right: auto !important;
 }
 
 /* Mobile adjustments */
@@ -152,6 +152,7 @@ header {
   }
 }
 
+/* Rest of the styles (cards, buttons, scanner, nav, menus, homepage) */
 .container {
   padding: 20px;
   padding-bottom: 100px;
@@ -296,7 +297,7 @@ nav a.active {
   color: var(--accent-color);
 }
 
-/* Menus - default right, but homepage Lars menu right (as requested) */
+/* Menus */
 #larsMenu, #actualSettingsPanel {
   display: none;
   position: fixed;
